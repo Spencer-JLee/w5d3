@@ -64,47 +64,26 @@ class Users
     SQL
   end
 
-end
-
-class Questions 
-
-  attr_accessor :id, :body, :author_id, :title
-
-   def self.all
-    data = QuestionsDatabase.instance.execute("SELECT * FROM questions")
-    data.map { |datum| Questions.new(datum) }
-  end
-
-  def self.find_by_id
-    question = QuestionsDatabase.instance.execute(<<-SQL, id)
+  def self.find_by_name(f_name, l_name)
+    user = QuestionsDatabase.instance.execute(<<-SQL, f_name, l_name)
       SELECT
         *
       FROM
-        questions
+        users
       WHERE
-        id = ?
+        f_name = ? AND l_name = ?
     SQL
-    return nil unless question.length > 0 
-    Questions.new(question.first)
+    return nil unless user.length > 0
+    user.map { |ele| Users.new(ele) }
   end
 
-  def initialize(options)
-    @id = options['id']
-    @body = options['body']
-    @author_id = options['author_id']
-    @title = options['title']
+  def authored_questions
+    Questions.find_by_author(self.id)
   end
 
-  def insert 
-    raise "#{self} already in database" if self.id
-    QuestionsDatabase.instance.execute(<<-SQL, self.body, self.title, self.author_id)
-      INSERT INTO
-        questions (body, title, author_id)
-      VALUES
-        (?, ?, ?)
-    SQL
-    self.id = QuestionsDatabase.instance.last_insert_row_id
-
+  def authored_replies
+    Replies.find_by_user_id(self.id)
   end
 
 end
+
