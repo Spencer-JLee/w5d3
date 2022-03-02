@@ -15,8 +15,6 @@ CREATE TABLE users (
 
 );
 
-
-
 CREATE TABLE questions (
   id INTEGER PRIMARY KEY,
   title TEXT NOT NULL,  
@@ -79,9 +77,10 @@ VALUES
 
 
 INSERT INTO
-  replies (body, question_id, user_id)
+  replies (body, question_id, user_id, parent_reply_id)
 VALUES
-  ('Here is the answer', (SELECT id from questions WHERE title = 'Test question'), (SELECT id FROM users WHERE f_name = 'Dominic'));
+  ('Here is the answer', (SELECT id from questions WHERE title = 'Test question'), (SELECT id FROM users WHERE f_name = 'Dominic'), NULL),
+  ('Here is another answer', (SELECT id FROM questions WHERE title = 'Test question'),  (SELECT id FROM users WHERE f_name = 'Dominic'), 1);
 
 INSERT INTO
   question_likes (user_id, question_id)

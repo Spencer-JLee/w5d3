@@ -8,7 +8,7 @@ require_relative 'questions_database.rb'
 
 class Replies
 
-  attr_accessor :id, :body, :author_id, :title
+  attr_accessor :id, :body, :question_id, :parent_reply_id, :user_id
 
    def self.all
     data = QuestionsDatabase.instance.execute("SELECT * FROM replies")
@@ -25,7 +25,7 @@ class Replies
         id = ?
     SQL
     return nil unless reply.length > 0 
-    reply.map { |ele| Replies.new(ele) }
+    Replies.new(reply.first)
 
   end
 
@@ -61,6 +61,31 @@ class Replies
     @question_id = options['question_id']
     @parent_reply_id = options['parent_reply_id']
     @user_id = options['user_id']
+  end
+
+  def author
+    Users.find_by_id(self.user_id)
+  end
+
+  def question
+    Questions.find_by_id(self.question_id)
+  end
+
+  def parent_reply
+    Replies.find_by_id(self.parent_reply_id)
+  end
+
+  def child_replies
+    child = QuestionsDatabase.instance.execute(<<-SQL, self.id)
+      SELECT
+        *
+      FROM
+        replies
+      WHERE
+        parent_reply_id = ?
+    SQL
+    return nil unless child.length > 0
+    child.map { |ele| Replies.new(ele)}
   end
 
   # def insert 

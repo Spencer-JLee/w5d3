@@ -58,6 +58,10 @@ class Questions
     Users.find_by_id(self.id)
   end
 
-  
+  def replies
+    Replies.find_by_question_id(self.id)
+  end
+
+
 
 end
