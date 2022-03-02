@@ -63,7 +63,8 @@ VALUES
 INSERT INTO
   questions (title, body, author_id)
 VALUES
-  ('Test question', 'How can we do this?', (SELECT id FROM users WHERE f_name = 'Spencer'));
+  ('Test question', 'How can we do this?', (SELECT id FROM users WHERE f_name = 'Spencer')),
+  ('Another Test question', 'Did we do this yet?', (SELECT id FROM users WHERE f_name = 'Dominic'));
 
 INSERT INTO
   question_follows (question_id, user_id)
